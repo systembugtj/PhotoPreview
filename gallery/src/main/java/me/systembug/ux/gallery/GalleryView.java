@@ -53,6 +53,12 @@ public class GalleryView extends FrameLayout {
     public GalleryView images(List<String> images) {
         if(mAdapter == null) {
             mAdapter = new ImageAdapter(images);
+            mAdapter.click(new ImageAdapter.OnImageClickedListener() {
+                @Override
+                public void onClick(String url) {
+                    loadImage(url);
+                }
+            });
             mRecyclerView.setAdapter(mAdapter);
             mRecyclerView.setLayoutManager(new ExtGridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
         } else {

@@ -32,11 +32,18 @@ import java.util.List;
 /**
  * Created by systembug on 4/12/16.
  */
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHoler> {
+public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHoler>{
+
+    public interface OnImageClickedListener {
+
+        void onClick (String url);
+    }
 
     protected List<String> mImages = new ArrayList<String>();
 
     protected int mLayout = R.layout.default_image_view;
+
+    private OnImageClickedListener mClick;
 
     public ImageAdapter() {
 
@@ -49,6 +56,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
     public ImageAdapter(List<String> images, int layout) {
         setImages(images);
         mLayout = layout;
+    }
+
+    public ImageAdapter click(OnImageClickedListener listener) {
+        mClick = listener;
+        return this;
     }
 
     public void setImages(List<String> images) {
@@ -86,6 +98,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
         public ImageViewHoler(View itemView) {
             super(itemView);
             mImageView = (SimpleDraweeView) itemView.findViewById(R.id.image_view);
+            mImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mClick != null) {
+                        mClick.onClick(mUrl);
+                    }
+                }
+            });
         }
 
         public void initView(int position) {
