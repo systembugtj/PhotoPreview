@@ -1,15 +1,26 @@
 package me.systembug.ux.gallery;
 
 import android.content.Context;
+import android.net.Uri;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.common.ResizeOptions;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import net.ganin.darv.DpadAwareRecyclerView;
+import net.ganin.darv.ExtGridLayoutManager;
+
+import java.util.List;
 
 /**
  * Created by systembug on 4/12/16.
@@ -18,6 +29,9 @@ public class GalleryView extends FrameLayout {
 
     protected SimpleDraweeView mImageView;
     protected DpadAwareRecyclerView mRecyclerView;
+
+    private ImageAdapter mAdapter;
+    private int mLayout = R.layout.gallery_view;
 
     public GalleryView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -29,15 +43,38 @@ public class GalleryView extends FrameLayout {
     }
 
     private void initView(Context context, AttributeSet attrs) {
-        mImageView = new SimpleDraweeView(context);
+        View v = LayoutInflater.from(context).inflate(mLayout, null);
+        mImageView = (SimpleDraweeView) v.findViewById(R.id.image_view);
+        mRecyclerView = (DpadAwareRecyclerView) v.findViewById(R.id.image_gallery);
 
-        LayoutParams param =  new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(mImageView, param);
-
-        mRecyclerView = new DpadAwareRecyclerView(context);
-
-        addView(mRecyclerView, param);
+        addView(v);
     }
 
+    public GalleryView images(List<String> images) {
+        if(mAdapter == null) {
+            mAdapter = new ImageAdapter(images);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new ExtGridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
+        } else {
+            mAdapter.setImages(images);
+        }
+
+        if (images.size() > 0) {
+            loadImage(images.get(0));
+        }
+        return this;
+    }
+
+    public void loadImage(String url) {
+        int width = 960, height = 540;
+        ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(url))
+                .setProgressiveRenderingEnabled(true)
+                .setResizeOptions(new ResizeOptions(width, height))
+                .build();
+        PipelineDraweeController controller = (PipelineDraweeController) Fresco.newDraweeControllerBuilder()
+                .setImageRequest(request)
+                .build();
+        mImageView.setController(controller);
+    }
 
 }
