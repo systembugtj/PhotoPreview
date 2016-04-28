@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -46,24 +47,20 @@ public class GalleryView extends FrameLayout {
         View v = LayoutInflater.from(context).inflate(mLayout, null);
         mImageView = (SimpleDraweeView) v.findViewById(R.id.image_view);
         mRecyclerView = (DpadAwareRecyclerView) v.findViewById(R.id.image_gallery);
-
+        mRecyclerView.setLayoutManager(new ExtGridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
+        mAdapter = new ImageAdapter();
+        mAdapter.click(new ImageAdapter.OnImageClickedListener() {
+            @Override
+            public void onClick(String url) {
+                loadImage(url);
+            }
+        });
+        mRecyclerView.setAdapter(mAdapter);
         addView(v);
     }
 
     public GalleryView images(List<String> images) {
-        if(mAdapter == null) {
-            mAdapter = new ImageAdapter(images);
-            mAdapter.click(new ImageAdapter.OnImageClickedListener() {
-                @Override
-                public void onClick(String url) {
-                    loadImage(url);
-                }
-            });
-            mRecyclerView.setAdapter(mAdapter);
-            mRecyclerView.setLayoutManager(new ExtGridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false));
-        } else {
-            mAdapter.setImages(images);
-        }
+        mAdapter.setImages(images);
 
         if (images.size() > 0) {
             loadImage(images.get(0));
@@ -81,6 +78,13 @@ public class GalleryView extends FrameLayout {
                 .setImageRequest(request)
                 .build();
         mImageView.setController(controller);
+    }
+
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        mRecyclerView.requestFocus();
+        return mRecyclerView.onKeyUp(keyCode, event) || super.onKeyUp(keyCode, event);
     }
 
 }

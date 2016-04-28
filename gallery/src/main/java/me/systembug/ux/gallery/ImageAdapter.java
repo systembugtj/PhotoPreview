@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -117,7 +118,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                 Point size = new Point();
                 display.getSize(size);
 
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(size.x / 6, size.y / 4);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(size.x / 6, size.y / 4);
                 mImageView.setLayoutParams(params);
 
                 loadImage(mUrl);
