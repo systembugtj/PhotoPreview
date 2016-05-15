@@ -7,6 +7,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.view.menu.ListMenuItemView;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Display;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController;
@@ -93,13 +95,19 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
 
     public class ImageViewHoler extends RecyclerView.ViewHolder {
 
+        private FrameLayout mContainer;
         private SimpleDraweeView mImageView;
         private String mUrl;
+        private View mRoot;
 
         public ImageViewHoler(View itemView) {
             super(itemView);
+
+            mRoot = itemView;
             mImageView = (SimpleDraweeView) itemView.findViewById(R.id.image_view);
-            mImageView.setOnClickListener(new View.OnClickListener() {
+
+            mContainer = (FrameLayout) itemView.findViewById(R.id.image_container);
+            mContainer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mClick != null) {
@@ -107,6 +115,21 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                     }
                 }
             });
+            mContainer.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (hasFocus) {
+                        int px = Screen.convertDpToPixel(mRoot.getContext(), 4);
+                        mContainer.setPadding(px, px, px, px);
+                    } else {
+                        int px = Screen.convertDpToPixel(mRoot.getContext(), 8);
+                        mContainer.setPadding(px, px, px, px);
+                    }
+                }
+            });
+
+            int px = Screen.convertDpToPixel(mRoot.getContext(), 8);
+            mContainer.setPadding(px, px, px, px);
         }
 
         public void initView(int position) {
@@ -135,6 +158,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ImageViewHol
                     .setImageRequest(request)
                     .build();
             mImageView.setController(controller);
+
+
         }
     }
 }
