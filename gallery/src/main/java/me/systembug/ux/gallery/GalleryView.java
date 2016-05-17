@@ -33,6 +33,7 @@ public class GalleryView extends FrameLayout {
 
     private ImageAdapter mAdapter;
     private int mLayout = R.layout.gallery_view;
+    private List<String> mImages;
 
     public GalleryView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
@@ -56,11 +57,22 @@ public class GalleryView extends FrameLayout {
             }
         });
         mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setOnItemSelectedListener(new DpadAwareRecyclerView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(DpadAwareRecyclerView parent, View view, int position, long id) {
+            }
+
+            @Override
+            public void onItemFocused(DpadAwareRecyclerView parent, View view, int position, long id) {
+                loadImage(mImages.get(position));
+            }
+        });
         addView(v);
     }
 
     public GalleryView images(List<String> images) {
         mAdapter.setImages(images);
+        mImages = images;
 
         if (images.size() > 0) {
             loadImage(images.get(0));
