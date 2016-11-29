@@ -2,6 +2,11 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.jfrog.artifactory'
 apply plugin: 'maven-publish'
 
+
+def libraryGroupId = 'me.systembug.ux'
+def libraryArtifactId = 'photo-preview'
+def libraryVersion = "1.0.0"
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -10,7 +15,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName libraryVersion
     }
     buildTypes {
         release {
@@ -33,10 +38,6 @@ dependencies {
     compile 'com.facebook.fresco:fresco:0.11.0+'
 
 }
-
-def libraryGroupId = 'me.systembug.ux'
-def libraryArtifactId = 'photo-preview'
-def libraryVersion = "1.0.0"
 
 
 publishing {
