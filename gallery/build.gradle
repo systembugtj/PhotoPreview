@@ -1,21 +1,18 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.jfrog.artifactory'
-apply plugin: 'maven-publish'
+apply plugin: 'com.github.dcendents.android-maven'
 
-
-def libraryGroupId = 'me.systembug.ux'
-def libraryArtifactId = 'photo-preview'
-def libraryVersion = "1.0.0"
+group='com.github.systembugtj'
+version="1.0.0"
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName libraryVersion
+        versionName version
     }
     buildTypes {
         release {
@@ -28,45 +25,13 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.2.0'
     compile 'com.android.support:recyclerview-v7:23.2.0'
     compile 'com.android.support:cardview-v7:23.2.0'
 
-    compile 'com.conouch.view:dpad-aware-recycler-view:1.0.0'
+    compile 'com.github.systembugtj:dpadawarerecyclerview:1.0.1'
 
     // fresco
     compile 'com.facebook.fresco:fresco:0.11.0+'
 
-}
-
-
-publishing {
-    publications {
-        aar(MavenPublication) {
-            groupId libraryGroupId
-            version libraryVersion
-            artifactId libraryArtifactId
-
-            artifact("$buildDir/outputs/aar/${project.name}-release.aar")
-        }
-    }
-}
-
-artifactory {
-    contextUrl = artifactory_context_url
-    publish {
-        repository {
-            repoKey = 'libs-release-local'
-
-            username = artifactory_username
-            password = artifactory_password
-        }
-        defaults {
-            publications('aar')
-            publishArtifacts = true
-
-            properties = ['qa.level': 'basic', 'q.os': 'android', 'dev.team': 'core']
-            publishPom = true
-        }
-    }
 }
